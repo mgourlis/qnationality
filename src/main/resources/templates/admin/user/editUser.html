@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}" >
+<body>
+<div id="main" layout:fragment="content">
+    <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+            <form autocomplete="off" th:action="@{'/admin/user/edit/' + ${user.getId()}}" th:object="${user}" method="post" class="form-horizontal" role="form">
+                <h2><span th:text="#{user.edit}"></span></h2>
+                <div class="form-group">
+                    <div class="col-sm-9">
+                        <label th:if="${#fields.hasErrors('name')}" th:errors="*{name}"
+                               class="validation-message"></label>
+                        <input type="text" th:field="*{name}" th:placeholder="#{user.name}"
+                               class="form-control" />
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-sm-9">
+                        <label	th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}"
+                                  class="validation-message"></label>
+                        <input type="text" th:field="*{lastName}"
+                               th:placeholder="#{user.lastname}" class="form-control" />
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-sm-9">
+                        <label	th:if="${#fields.hasErrors('foreas')}" th:errors="*{foreas}" class="validation-message"></label>
+                        <input type="text" th:field="*{foreas}" th:placeholder="#{user.foreas}" class="form-control" />
+                    </div>
+                </div>
+
+                <div class="form-check">
+                        <label th:if="${#fields.hasErrors('active')}" th:errors="*{active}" class="validation-message"></label>
+                        <input type="checkbox" th:field="*{active}" th:value="*{active}" class="form-check-input" />
+                        <label class="form-check-label"><span th:text="#{user.active}"></span></label>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-9">
+                        <label><span th:text="#{role.roles}"></span></label>
+                        <select class="form-control" th:field="*{roles}" multiple="multiple" >
+                            <option th:each="role : ${roles}"
+                                    th:field="*{roles}"
+                                    th:value="${role.id}"
+                                    th:text="${role.role}">Role name</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-sm-3">
+                        <button type="submit" class="btn btn-primary btn-block"><span th:text="#{general.submit}"></span></button>
+                    </div>
+                </div>
+            </form>
+
+            <form th:action="@{'/admin/user/resetpass'}" method="post" class="form-horizontal" role="form">
+                <input type="hidden" name="email" th:value="${user.getEmail()}"/>
+                <div class="form-group">
+                    <div class="col-sm-3">
+                        <button type="submit" class="btn btn-primary btn-block"><span th:text="#{general.resetpassword}"></span></button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,76 @@
+<head th:fragment="head">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta content="ie=edge" http-equiv="x-ua-compatible" />
+    <title th:text="${metaTitle} ? ${metaTitle} : #{app.name}"></title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <!--<link rel="stylesheet" type="text/css" th:href="@{/css/fonts.css}" />-->
+    <!--<link rel="stylesheet" type="text/css" th:href="@{/css/bootstrap.min.css}" />-->
+    <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script type="text/javascript" th:src="@{/js/jquery/3.3.1/jquery.min.js}"></script>
+</head>
+
+<nav class="navbar navbar-inverse navbar-fixed-top" th:fragment="navbar">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="/"><span th:text="#{app.name}"></span></a>
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#top-main-navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+        </div>
+        <div class="collapse navbar-collapse" id="top-main-navbar">
+        <ul class="nav navbar-nav">
+            <li sec:authorize="hasRole('ROLE_ADMIN')"><a href="/admin/user/"><span th:text="#{user.users}"></span></a></li>
+            <li sec:authorize="hasRole('ROLE_ADMIN')"><a href="/admin/role/"><span th:text="#{role.roles}"></span></a></li>
+            <li sec:authorize="hasRole('ROLE_ADMIN')"><a href="/admin/question/"><span th:text="#{question.questions}"></span></a></li>
+            <li sec:authorize="hasRole('ROLE_ADMIN')"><a href="#" data-toggle="dropdown" class="dropdown-toggle"><span th:text="#{general.settings}"></span></a>
+                <ul class="dropdown-menu">
+                    <li><a href="/admin/question-category/"><span th:text="#{questioncategory.questioncategories}"></span></a></li>
+                    <li><a href="/admin/difficulty/"><span th:text="#{difficulty.difficulties}"></span></a></li>
+                    <li><a href="/admin/exam-setting/"><span th:text="#{examsetting.examsettings}"></span></a></li>
+                </ul>
+            </li>
+            <li sec:authorize="hasRole('ROLE_ADMIN')"><a href="#" data-toggle="dropdown" class="dropdown-toggle"><span th:text="#{general.importexport}"></span></a>
+                <ul class="dropdown-menu">
+                    <li><a href="/admin/import/"><span th:text="#{import.questions}"></span></a></li>
+                    <li><a href="/admin/export/questions"><span th:text="#{export.questions}"></span></a></li>
+                </ul>
+            </li>
+            <li sec:authorize="hasRole('ROLE_MODERATOR')"><a href="/moderator/exam/show"><span th:text="#{exam.examvalidation}"></span></a></li>
+            <li sec:authorize="hasRole('ROLE_USER')"><a href="/user/exam/new"><span th:text="#{exam.createexam}"></span></a></li>
+        </ul>
+        <ul class="nav navbar-nav navbar-right">
+            <li sec:authorize="isFullyAuthenticated()">
+                <a href="#" data-toggle="dropdown" class="dropdown-toggle"><span class="glyphicon glyphicon-user"></span>
+                <span th:utext="${#request.userPrincipal.principal.name}"></span>
+                <span> </span>
+                <span th:text ="${#request.userPrincipal.principal.lastName}"></span>
+                <span>(</span>
+                <span th:text ="${#request.userPrincipal.principal.email}"></span>
+                <span>)</span></a>
+                <ul class="dropdown-menu">
+                    <li><a href="/resetpass"><span th:text="#{general.resetpassword}"></span></a></li>
+                </ul>
+            </li>
+            <li class="dropdown"><a href="#" data-toggle="dropdown" class="dropdown-toggle">
+                <i class="glyphicon glyphicon-globe"></i> <span th:text="#{language.language}"></span></a>
+                <ul class="dropdown-menu">
+                    <li><a href="?locale=en"><span th:text="#{language.english}"></span></a></li>
+                    <li><a href="?locale=gr"><span th:text="#{language.greek}"></span></a></li>
+                </ul>
+            </li>
+            <li sec:authorize="isFullyAuthenticated()">
+                <a href="#">
+                    <form th:action="@{/logout}" method="post">
+                        <button type="Submit" class="btn btn-link" style="padding-top:0;padding-bottom:0;"><span class="glyphicon glyphicon-log-out"> </span><span th:text="#{general.logout}"></span></button>
+                    </form>
+                </a>
+            </li>
+        </ul>
+        </div>
+    </div>
+</nav>

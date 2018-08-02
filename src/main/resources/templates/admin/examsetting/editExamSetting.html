@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}" >
+<body>
+<div id="main" layout:fragment="content">
+    <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+            <form autocomplete="off" th:action="@{'/admin/exam-setting/edit/' + ${examSetting.getId()}}" th:object="${examSetting}" method="post" class="form-horizontal" role="form">
+                <h2><span th:text="#{examsetting.edit}"></span></h2>
+                <div class="form-group">
+                    <div class="col-sm-9">
+                        <label><span th:text="#{examsetting.name}"></span></label>
+                        <label	th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="validation-message"></label>
+                        <input type="text" th:field="*{name}" th:placeholder="#{examsetting.name}" class="form-control" />
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-sm-9">
+                        <label><span th:text="#{examsetting.numofquestions}"></span></label>
+                        <label	th:if="${#fields.hasErrors('numOfQuestions')}" th:errors="*{numOfQuestions}" class="validation-message"></label>
+                        <input type="text" th:field="*{numOfQuestions}" th:placeholder="#{examsetting.numofquestions}" class="form-control" />
+                    </div>
+                </div>
+
+                <div class="form-check">
+                    <label th:if="${#fields.hasErrors('enabled')}" th:errors="*{enabled}" class="validation-message"></label>
+                    <input type="checkbox" th:field="*{enabled}" th:value="*{enabled}" class="form-check-input" />
+                    <label class="form-check-label"><span th:text="#{examsetting.enabled}"></span></label>
+                </div>
+
+                <br/>
+                <div class="form-group">
+                    <label class="col-sm-9"><span th:text="#{questioncategory.questioncategories}"></span></label>
+                    <div class="col-sm-9" th:each="questionCategory : ${questionCategories}">
+                        <label	th:if="${#fields.hasErrors('*{questionCategories}')}" th:errors="*{questionCategories}" class="validation-message"></label>
+                        <input type="checkbox" th:field="*{questionCategories}" th:value="${questionCategory.getId()}" />
+                        <label th:for="${#ids.prev('questionCategories')}" th:text="${questionCategory.name}">Category</label>
+                    </div>
+                </div>
+
+                <br/>
+                <div class="form-group">
+                    <label class="col-sm-9"><span th:text="#{difficulty.percentage}"></span></label>
+                    <div class="col-sm-9" th:each="difficulty,iterationStatus : ${difficulties}">
+                        <label	th:if="${#fields.hasErrors('*{difficultySettings[__${iterationStatus.index}__]}')}" th:errors="*{difficultySettings[__${iterationStatus.index}__]}" class="validation-message"></label>
+                        <label th:for="*{difficultySettings[__${iterationStatus.index}__]}" th:text="${difficulty.level}">Difficulty</label>
+                        <input type="text" th:field="*{difficultySettings[__${iterationStatus.index}__]}" th:value="*{difficultySettings[__${iterationStatus.index}__]}" />
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-sm-3">
+                        <button type="submit" class="btn btn-primary btn-block"><span th:text="#{general.submit}"></span></button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>

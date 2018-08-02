@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}" >
+<body>
+<div id="main" layout:fragment="content">
+    <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+            <form autocomplete="off" th:action="@{'/admin/difficulty/edit/' + ${difficulty.getId()}}" th:object="${difficulty}" method="post" class="form-horizontal" role="form">
+                <h2><span th:text="#{difficulty.edit}"></span></h2>
+                <div class="form-group">
+                    <div class="col-sm-9">
+                        <label><span th:text="#{difficulty.level}"></span></label><br/>
+                        <label th:if="${#fields.hasErrors('level')}" th:errors="*{level}"
+                               class="validation-message"></label>
+                        <input type="text" th:field="*{level}" th:placeholder="#{difficulty.level}"
+                               class="form-control" />
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-sm-9">
+                        <label><span th:text="#{difficulty.levelnum}"></span></label><br/>
+                        <label	th:if="${#fields.hasErrors('levelNumber')}" th:errors="*{levelNumber}"
+                                  class="validation-message"></label>
+                        <input type="text" th:field="*{levelNumber}"
+                               th:placeholder="#{difficulty.levelnum}" class="form-control" />
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-sm-3">
+                        <button type="submit" class="btn btn-primary btn-block"><span th:text="#{general.submit}"></span></button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}" >
+<body>
+<div id="main" layout:fragment="content">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-6">
+                <form th:action="@{/moderator/exam/show}" method="GET" class="form-inline">
+                    <div class="form-group mb-2"><input type="text" id="uid" name="uid"  th:placeholder="#{exam.uniqueid}" class="form-control" /></div>
+                    <button class="btn btn-primary mb-2" type="Submit" th:text="#{general.search}"></button>
+                </form>
+            </div>
+            <div th:if="${exam != null && exam.getStatus().toString() == 'PENDING'}">
+                <div class="col-sm-6">
+                        <div style="display:inline-block; vertical-align: middle;">
+                            <strong><span th:text="#{exam.validateexam} + ': '" style ='float: left; padding: 5px;'></span></strong>
+                            <form th:action="@{/moderator/exam/validate}" method="GET" style ='float: left; padding: 5px;'>
+                                <input type="hidden" name="validationstatus" value="true"/>
+                                <input type="hidden" id="uid" name="uid"  th:placeholder="#{exam.uniqueid}" class="form-control" th:value="${exam.getuID()}" />
+                                <button class="btn btn-success mb-2" type="Submit" th:onclick="'return confirm(\''+#{exam.validation.message}+'\');'" th:text="#{exam.validation.correct}"></button>
+                            </form>
+                            <form th:action="@{/moderator/exam/validate}" method="GET" style ='float: left; padding: 5px;'>
+                                <input type="hidden" name="validationstatus" value="false"/>
+                                <input type="hidden" id="uid" name="uid"  th:placeholder="#{exam.uniqueid}" class="form-control" th:value="${exam.getuID()}" />
+                                <button class="btn btn-danger mb-2" type="Submit" th:onclick="'return confirm(\''+#{exam.validation.message}+'\');'" th:text="#{exam.validation.false}"></button>
+                            </form>
+                        </div>
+                </div>
+            </div>
+        </div>
+        <div th:if="${exam != null}">
+            <div class="col-sm-9">
+                <h3><span th:text="#{exam.uniqueid}"></span>: <span th:text="${exam.getuID()}"></span></h3>
+                <fieldset class="info-border" >
+                    <legend class="info-border"><span th:text="#{exam.information}"></span></legend>
+                    <table class="table">
+                        <tr>
+                            <td><span th:text="#{exam.createddate}"></span></td>
+                            <td><span th:text="${#dates.format(exam.getCreatedAt(), 'dd-MM-yyyy')}"></span></td>
+                        </tr>
+                        <tr>
+                            <td><span th:text="#{exam.uniqueid}"></span></td>
+                            <td><span th:text="${exam.getuID()}"></span></td>
+                        </tr>
+                        <tr>
+                            <td><span th:text="#{exam.foreas}"></span>:</td>
+                            <td><span th:text="${exam.getForeas()}"></span></td>
+                        </tr>
+                        <tr th:if="${exam.getStatus().toString() == 'VALIDATED'}">
+                            <td><span th:text="#{exam.validateddate}"></span></td>
+                            <td><span th:text="${#dates.format(exam.getValidatedDate(), 'dd-MM-yyyy')}"></span></td>
+                        </tr>
+                        <tr th:if="${exam.getStatus().toString() == 'VALIDATED'}">
+                            <td><span th:text="#{exam.validationuser}"></span></td>
+                            <td><span th:text="${exam.getValidationUser()}"></span></td>
+                        </tr>
+                        <tr th:if="${exam.getStatus().toString() == 'VALIDATED'}">
+                            <td><span th:text="#{exam.validationstatus}"></span></td>
+                            <td><span th:if="${exam.getValidationStatus().toString() == 'CORRECT'}">
+                                    <span th:text="#{exam.validation.correct}"></span> <i class="glyphicon glyphicon-ok" style="font-size:20px;color:green"></i>
+                                </span>
+                                <span th:if="${exam.getValidationStatus().toString() == 'FALSE'}">
+                                    <span th:text="#{exam.validation.false}"></span> <i class="glyphicon glyphicon-remove" style="font-size:20px;color:red"></i>
+                                </span></td>
+                        </tr>
+                    </table>
+                </fieldset>
+            </div>
+
+            <br/>
+
+            <div class="col-sm-9">
+                <fieldset class="info-border">
+                    <legend class="info-border"><span th:text="#{exam.questions}"></span></legend>
+                    <div th:each="examQuestion : ${exam.getExamQuestions()}">
+                        <label><span th:text="#{exam.question}"></span> <span th:text="${examQuestion.getSortNumber()}"></span></label>
+                        <div th:text="${examQuestion.getQuestion().getQuestiontext()}"></div>
+                        <br/>
+                    </div>
+                </fieldset>
+            </div>
+
+        </div>
+    </div>
+</div>
+</body>
+</html>

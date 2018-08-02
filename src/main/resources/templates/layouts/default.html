@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      th:with="lang=${#locale.language}" th:lang="${lang}">
+<head th:replace="fragments/header :: head"></head>
+<body>
+    <head th:replace="fragments/header :: navbar"></head>
+    <div class="container-fluid">
+        <div class="alert alert-success" th:if="(${successMessageBox} != null)">
+            <span th:text="${successMessageBox}"></span>
+        </div>
+        <div class="alert alert-info" th:if="(${infoMessageBox} != null)">
+            <span th:text="${infoMessageBox}"></span>
+        </div>
+        <div class="alert alert-warning" th:if="(${warningMessageBox} != null)">
+            <span th:text="${warningMessageBox}"></span>
+        </div>
+
+        <div class="alert alert-danger" th:if="(${errorMessageBox} != null)">
+            <span th:text="${errorMessageBox}"></span>
+        </div>
+        <div layout:fragment="content"></div>
+    </div>
+    <div th:replace="fragments/footer :: footer"></div>
+</body>
+</html>

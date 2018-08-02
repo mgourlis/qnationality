@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.6.0.final using JasperReports Library version 6.6.0  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ithageneia_01" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="746be497-b6b7-49b3-a835-1434fc10be61">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<parameter name="exam_uid" class="java.lang.String"/>
+	<queryString language="SQL">
+		<![CDATA[SELECT e.uid,
+	e.foreas,
+	e.created_at,
+	eq.short_number,
+	q.short_name,
+	q.question_text
+FROM qnationallitydb.examquestions AS eq
+	LEFT JOIN qnationallitydb.exam AS e ON 
+	  ( 
+	 e.exam_id = eq.exam_id) 
+	LEFT JOIN qnationallitydb.question AS q ON 
+	  ( 
+	 eq.question_id = q.question_id) 
+WHERE  
+	 eq.deleted = false 
+	 AND e.deleted = false
+	 AND e.uid = $P{exam_uid} 
+ORDER BY eq.short_number ASC]]>
+	</queryString>
+	<field name="uid" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="uid"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="exam"/>
+	</field>
+	<field name="foreas" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="foreas"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="exam"/>
+	</field>
+	<field name="created_at" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.label" value="created_at"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="exam"/>
+	</field>
+	<field name="short_number" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.label" value="short_number"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="examquestions"/>
+	</field>
+	<field name="short_name" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="short_name"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="question"/>
+	</field>
+	<field name="question_text" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="question_text"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="question"/>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="98" splitType="Stretch">
+			<textField>
+				<reportElement x="2" y="50" width="550" height="30" uuid="c411d28e-dafc-44f7-891e-29c0e1d6ce13"/>
+				<textElement textAlignment="Center">
+					<font fontName="DejaVu Serif" size="14" isBold="true" isItalic="false" isUnderline="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{foreas}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="2" y="10" width="551" height="41" uuid="050e8ab6-72ca-4605-ba27-b3bc04de3460"/>
+				<textElement textAlignment="Center">
+					<font fontName="DejaVu Serif" size="18" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Διαγώνισμα Ιθαγένειας]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="39" splitType="Stretch">
+			<textField>
+				<reportElement x="280" y="7" width="270" height="30" uuid="a07a363a-b26f-49d2-982d-bfc324c76d49"/>
+				<textElement textAlignment="Right">
+					<font fontName="DejaVu Serif"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Σειριακός Αριθμός: " + $F{uid}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="10" y="7" width="270" height="30" uuid="9410e5d6-6116-4d93-9aa7-96c14df8109d"/>
+				<textElement>
+					<font fontName="DejaVu Serif"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Ημερομηνία-Ώρα:" + new SimpleDateFormat( "dd/MM/yyyy - hh:mm:ss").format($F{created_at})]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="83" splitType="Stretch">
+			<textField>
+				<reportElement stretchType="ContainerBottom" x="10" y="10" width="541" height="20" uuid="5635f874-c23f-4515-9728-cc726b358989">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="d2acf856-e6a9-44cb-bc81-d2996a83084d"/>
+				</reportElement>
+				<textElement>
+					<font fontName="DejaVu Serif" size="12" isUnderline="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Ερώτηση " + $F{short_number}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="ContainerBottom" mode="Transparent" x="10" y="30" width="541" height="40" isPrintWhenDetailOverflows="true" uuid="6c42d031-2482-47b6-b86a-fa7801651045">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="d7f94a74-1d1b-4f55-a127-5df5a60e23dd"/>
+				</reportElement>
+				<textElement>
+					<font fontName="DejaVu Serif" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{question_text}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="36" splitType="Stretch">
+			<textField>
+				<reportElement x="345" y="0" width="100" height="30" uuid="3e20a64d-ebee-47fc-b399-cb14a8292451"/>
+				<textElement textAlignment="Right">
+					<font fontName="DejaVu Serif"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Σελίδα " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="445" y="0" width="100" height="30" uuid="1ddd687d-3234-42f9-8a30-21fb55cc4ae7"/>
+				<textElement textAlignment="Left">
+					<font fontName="DejaVu Serif"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" από " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+</jasperReport>

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}" >
+<body>
+<div id="main" layout:fragment="content">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <h2><span th:text="#{question.questions}"></span></h2>
+            </div>
+            <div class="col-md-6">
+                <div class="pull-right">
+                    <a th:href="${'/admin/question/new'}" class="btn btn-primary mb-2"><span th:text="#{question.create}"></span></a>
+                </div>
+            </div>
+        </div>
+        <div class="row"></div>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="btn-group dropdown" sd:page-size-selector="dropdown"></div>
+            </div>
+            <div class="col-md-8">
+                <div class="pull-right">
+                    <form th:action="@{/admin/question/}" method="GET" class="form-inline">
+                        <div class="form-group mb-2">
+                            <select class="form-control" id="qdifficulty" name="qdifficulty" >
+                                <option value=""><span th:text="#{difficulty.difficulty}"></span></option>
+                                <option th:each="difficulty : ${difficulties}"
+                                        th:value="${difficulty.getLevelNumber()}"
+                                        th:text="${difficulty.getLevel()}"
+                                        th:selected="(${param.qdifficulty == difficulty.getLevelNumber()})">Difficulty</option>
+                            </select>
+                        </div>
+                        <div class="form-group mb-2">
+                            <select class="form-control" id="qcategory" name="qcategory" >
+                                <option value=""><span th:text="#{questioncategory.questioncategory}"></span></option>
+                                <option th:each="questionCategory : ${questionCategories}"
+                                        th:value="${questionCategory.getName()}"
+                                        th:text="${questionCategory.getName()}"
+                                        th:selected="(${param.qcategory == questionCategory.getName()})">Category</option>
+                            </select>
+                        </div>
+                        <button class="btn btn-primary mb-2" type="Submit" th:text="#{general.search}"></button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div th:if="${!questions.isEmpty()}">
+            <table class="table table-striped table-hover">
+                <thead>
+                <tr>
+                    <th><a class="sorted" sd:pagination-sort="shortname" ><span th:text="#{question.shortname}"></span></a></th>
+                    <th><a class="sorted" sd:pagination-sort="questionCategory" ><span th:text="#{questioncategory.questioncategory}"></span></a></th>
+                    <th><a class="sorted" sd:pagination-sort="questionDifficulty" ><span th:text="#{difficulty.difficulty}"></span></a></th>
+                    <th><span th:text="#{general.view}"></span></th>
+                    <th><span th:text="#{general.edit}"></span></th>
+                    <th><span th:text="#{general.delete}"></span></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="question,iterationStatus : ${questions}">
+                    <td th:text="${question.getShortname()}">Short Name</td>
+                    <td th:text="${question.getQuestionCategory().getName()}">Category</td>
+                    <td th:text="${question.getQuestionDifficulty().getLevel()}">Difficulty</td>
+                    <td><a th:href="@{'/admin/question/' + ${question.getId()}}" class="btn btn-success btn-xs"><span th:text="#{general.view}"></span></a></td>
+                    <td><a th:href="@{'/admin/question/edit/' + ${question.getId()}}" class="btn btn-warning btn-xs"><span th:text="#{general.edit}"></span></a></td>
+                    <td><a th:href="@{'/admin/question/delete/' + ${question.getId()}}" class="btn btn-danger btn-xs" th:onclick="'return confirm(\''+#{general.delete.confirm}+'\');'">
+                        <span th:text="#{general.delete}"></span></a></td>
+                </tr>
+                </tbody>
+            </table>
+
+        </div>
+
+        <div class="row">
+            <div class="col-sm-6">
+                <div sd:pagination-summary="">info</div>
+            </div>
+            <div class="col-sm-6">
+                <nav class="pull-right">
+                    <ul class="pagination" sd:pagination="full">
+                        <!-- Pagination created by SpringDataDialect, this content is just for mockup -->
+                        <li class="disabled"><a href="#" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>
+                        <li class="active"><a href="#">1 <span class="sr-only">(current)</span></a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

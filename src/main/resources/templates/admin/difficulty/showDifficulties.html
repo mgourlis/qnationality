@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}" >
+<body>
+<div id="main" layout:fragment="content">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <h2><span th:text="#{difficulty.difficulties}"></span></h2>
+            </div>
+            <div class="col-md-6">
+                <div class="pull-right">
+                    <a th:href="${'/admin/difficulty/new'}" class="btn btn-primary mb-2"><span th:text="#{difficulty.create}"></span></a>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+        </div>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="btn-group dropdown" sd:page-size-selector="dropdown"></div>
+            </div>
+        </div>
+        <div th:if="${!difficulties.isEmpty()}">
+            <table class="table table-striped table-hover">
+                <thead>
+                <tr>
+                    <th><a class="sorted" sd:pagination-sort="level" ><span th:text="#{difficulty.level}"></span></a></th>
+                    <th><a class="sorted" sd:pagination-sort="levelNumber" ><span th:text="#{difficulty.levelnum}"></span></a></th>
+                    <th><span th:text="#{general.view}"></span></th>
+                    <th><span th:text="#{general.edit}"></span></th>
+                    <th><span th:text="#{general.delete}"></span></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="difficulty,iterationStatus : ${difficulties}">
+                    <td th:text="${difficulty.getLevel()}">Level</td>
+                    <td th:text="${difficulty.getLevelNumber()}">Level Number</td>
+                    <td><a th:href="${'/admin/difficulty/' + difficulty.getId()}" class="btn btn-success btn-xs"><span th:text="#{general.view}"></span></a></td>
+                    <td><a th:href="${'/admin/difficulty/edit/' + difficulty.getId()}" class="btn btn-warning btn-xs"><span th:text="#{general.edit}"></span></a></td>
+                    <td><a th:href="${'/admin/difficulty/delete/' + difficulty.getId()}" class="btn btn-danger btn-xs" th:onclick="'return confirm(\''+#{general.delete.confirm}+'\');'">
+                        <span th:text="#{general.delete}"></span></a></td>
+                </tr>
+                </tbody>
+            </table>
+
+        </div>
+
+        <div class="row">
+            <div class="col-sm-6">
+                <div sd:pagination-summary="">info</div>
+            </div>
+            <div class="col-sm-6">
+                <nav class="pull-right">
+                    <ul class="pagination" sd:pagination="full">
+                        <!-- Pagination created by SpringDataDialect, this content is just for mockup -->
+                        <li class="disabled"><a href="#" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>
+                        <li class="active"><a href="#">1 <span class="sr-only">(current)</span></a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
