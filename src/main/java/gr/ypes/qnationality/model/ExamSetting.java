@@ -1,7 +1,6 @@
 package gr.ypes.qnationality.model;
 
 import javax.persistence.*;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import java.util.List;
 
@@ -15,22 +14,13 @@ public class ExamSetting extends BaseEntity {
     @NotEmpty(message = "*Please provide a name for the exam settings")
     private String name;
 
-    @Column(name = "number_of_questions")
-    @Min(1)
-    private int numOfQuestions;
-
     @Column(name = "enabled")
     private Boolean enabled;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval=true)
-    @JoinColumn(name="exam_setting_id", referencedColumnName="exam_setting_id")
+    @JoinColumn(name="exam_setting_id", referencedColumnName="exam_setting_id", nullable = false)
     @NotEmpty
-    private List<DifficultySetting> difficultySettings;
-
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "questioncategory_examsetting", joinColumns = @JoinColumn(name = "exam_settings_id"), inverseJoinColumns = @JoinColumn(name = "question_category_id"))
-    @NotEmpty
-    private List<QuestionCategory> questionCategories;
+    private List<QuestionCategoryAndDifficultySetting> questionCategoryAndDifficultySettings;
 
     public String getName() {
         return name;
@@ -41,11 +31,11 @@ public class ExamSetting extends BaseEntity {
     }
 
     public int getNumOfQuestions() {
+        int numOfQuestions = 0;
+        for (QuestionCategoryAndDifficultySetting qCADS : questionCategoryAndDifficultySettings) {
+            numOfQuestions += qCADS.getNumOfQuestions();
+        }
         return numOfQuestions;
-    }
-
-    public void setNumOfQuestions(int numOfQuestions) {
-        this.numOfQuestions = numOfQuestions;
     }
 
     public Boolean isEnabled() {
@@ -56,41 +46,33 @@ public class ExamSetting extends BaseEntity {
         this.enabled = enabled;
     }
 
-    public List<DifficultySetting> getDifficultySettings() {
-        return difficultySettings;
+    public List<QuestionCategoryAndDifficultySetting> getQuestionCategoryAndDifficultySettings() {
+        return questionCategoryAndDifficultySettings;
     }
 
-    public void setDifficultySettings(List<DifficultySetting> difficultySettings) {
-        this.difficultySettings = difficultySettings;
-    }
-
-    public List<QuestionCategory> getQuestionCategories() {
-        return questionCategories;
-    }
-
-    public void setQuestionCategories(List<QuestionCategory> questionCategories) {
-        this.questionCategories = questionCategories;
+    public void setQuestionCategoryAndDifficultySettings(List<QuestionCategoryAndDifficultySetting> questionCategoryAndDifficultySettings) {
+        this.questionCategoryAndDifficultySettings = questionCategoryAndDifficultySettings;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof ExamSetting)) return false;
+        if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
 
         ExamSetting that = (ExamSetting) o;
 
-        if (getNumOfQuestions() != that.getNumOfQuestions()) return false;
-        if (!getName().equals(that.getName())) return false;
-        return isEnabled().equals(that.isEnabled());
+        if (!name.equals(that.name)) return false;
+        if (!enabled.equals(that.enabled)) return false;
+        return questionCategoryAndDifficultySettings != null ? questionCategoryAndDifficultySettings.equals(that.questionCategoryAndDifficultySettings) : that.questionCategoryAndDifficultySettings == null;
     }
 
     @Override
     public int hashCode() {
         int result = super.hashCode();
-        result = 31 * result + getName().hashCode();
-        result = 31 * result + getNumOfQuestions();
-        result = 31 * result + isEnabled().hashCode();
+        result = 31 * result + name.hashCode();
+        result = 31 * result + enabled.hashCode();
+        result = 31 * result + (questionCategoryAndDifficultySettings != null ? questionCategoryAndDifficultySettings.hashCode() : 0);
         return result;
     }
 }

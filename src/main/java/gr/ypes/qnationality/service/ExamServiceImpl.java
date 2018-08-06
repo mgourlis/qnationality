@@ -152,67 +152,41 @@ public class ExamServiceImpl implements IExamService {
     }
 
     private boolean canGenerateQuestions(ExamSetting examSetting){
-        List<QuestionCategory> questionCategories = examSetting.getQuestionCategories();
-        List<DifficultySetting> difficultySettings = examSetting.getDifficultySettings();
-        int questionsSize = questionCategories.size();
-        if(questionCategories.isEmpty())
+        List<QuestionCategoryAndDifficultySetting> qCADs = examSetting.getQuestionCategoryAndDifficultySettings();
+        if(qCADs.isEmpty())
             return false;
-        if(difficultySettings.isEmpty())
-            return false;
-        for (QuestionCategory category : questionCategories) {
-            int questionCategorySize = ((int) examSetting.getNumOfQuestions() / questionsSize) + 1;
-            for (DifficultySetting difficultySetting: difficultySettings) {
-                int questionsCategoryDifficultySize = (int)((questionCategorySize * difficultySetting.getPercentage())/100.0);
-                int qnum = questionService.countQuestionsByQuestionCategoryNameAndDifficultyLevelNumber(category.getName(),difficultySetting.getDifficulty().getLevelNumber());
-                if(questionsCategoryDifficultySize > qnum){
-                    return false;
-                }
+        int sumQuestions=0;
+        for(QuestionCategoryAndDifficultySetting qCAD : qCADs){
+            if(qCAD.getNumOfQuestions() > questionService.countQuestionsByQuestionCategoryNameAndDifficultyLevelNumber(qCAD.getQuestionCategory().getName(), qCAD.getDifficulty().getLevelNumber())){
+                return false;
+            }else{
+                sumQuestions += qCAD.getNumOfQuestions();
             }
         }
+        if(sumQuestions == 0)
+            return false;
         return true;
     }
 
     private List<ExamQuestion> generateQuestions(ExamSetting examSetting){
-        List<QuestionCategory> questionCategories = examSetting.getQuestionCategories();
-        List<DifficultySetting> difficultySettings = examSetting.getDifficultySettings();
-        if(!questionCategories.isEmpty()) {
-            List<Set<ExamQuestion>> examQuestionsList = new ArrayList<>();
-            int questionsSize = questionCategories.size();
-            for (QuestionCategory questionCategory : questionCategories) {
-                Set<ExamQuestion> categoryQuestions = new LinkedHashSet<>();
-                int questionCategorySize = ((int) examSetting.getNumOfQuestions() / questionsSize) + 1;
-                for (DifficultySetting difficultySetting : difficultySettings) {
-                    int questionsCategoryDifficultySize = (int) ((questionCategorySize * difficultySetting.getPercentage()) / 100.0);
-                    Set<Question> randQuestions = questionService.getRandomQuestionsByCategoryAndDifficulty
-                            (questionCategory, difficultySetting.getDifficulty(), questionsCategoryDifficultySize);
-                    for (Question question : randQuestions) {
-                        ExamQuestion examQuestion = new ExamQuestion();
-                        examQuestion.setSortNumber(categoryQuestions.size());
-                        examQuestion.setQuestion(question);
-                        categoryQuestions.add(examQuestion);
-                    }
-                }
-                examQuestionsList.add(categoryQuestions);
-            }
-            int categoryIndex = questionCategories.size() - 1;
-            while ((examSetting.getNumOfQuestions() - countExamQuestions(examQuestionsList)) < 0) {
-                if (categoryIndex < 0)
-                    categoryIndex = questionCategories.size() - 1;
-                examQuestionsList.get(categoryIndex).remove(examQuestionsList.get(categoryIndex).toArray()[examQuestionsList.get(categoryIndex).size() - 1]);
-            }
+        List<QuestionCategoryAndDifficultySetting> qCADs = examSetting.getQuestionCategoryAndDifficultySettings();
+        if(!qCADs.isEmpty()) {
+            List<ExamQuestion> examQuestionsList = new ArrayList<>();
             int count = 1;
-            List<ExamQuestion> allExamQuestions = new ArrayList<>();
-            for (Set<ExamQuestion> examQuestions : examQuestionsList) {
-                for (ExamQuestion examQuestion : examQuestions) {
+            for(QuestionCategoryAndDifficultySetting qCAD : qCADs) {
+                Set<Question> randQuestions = questionService.getRandomQuestionsByCategoryAndDifficulty(qCAD.getQuestionCategory(), qCAD.getDifficulty(), qCAD.getNumOfQuestions());
+                for (Question question : randQuestions) {
+                    ExamQuestion examQuestion = new ExamQuestion();
                     examQuestion.setSortNumber(count);
-                    allExamQuestions.add(examQuestion);
+                    examQuestion.setQuestion(question);
+                    examQuestionsList.add(examQuestion);
                     count++;
                 }
             }
-            Collections.sort(allExamQuestions);
-            return allExamQuestions;
+            Collections.sort(examQuestionsList);
+            return examQuestionsList;
         }else{
-            throw new IllegalArgumentException("Failed two generate questions with this Exam Setting");
+            throw new IllegalArgumentException("Failed to generate questions with this Exam Setting");
         }
     }
 

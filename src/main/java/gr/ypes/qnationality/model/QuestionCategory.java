@@ -10,7 +10,7 @@ import javax.validation.constraints.NotNull;
 @Table(name = "questioncategory")
 @AttributeOverride(name = "id", column = @Column(name = "question_category_id",
         nullable = false, columnDefinition = "BIGINT UNSIGNED"))
-public class QuestionCategory extends BaseEntity {
+public class QuestionCategory extends BaseEntity implements Comparable<QuestionCategory> {
 
     @Column(name = "name")
     @NotNull(message = "*Please provide a name for the category")
@@ -40,5 +40,16 @@ public class QuestionCategory extends BaseEntity {
         int result = super.hashCode();
         result = 31 * result + getName().hashCode();
         return result;
+    }
+
+    @Override
+    public int compareTo(QuestionCategory o) {
+        if(this.getId() > o.getId()){
+            return 1;
+        }else if(this.getId() < o.getId()){
+            return -1;
+        }else{
+            return 0;
+        }
     }
 }

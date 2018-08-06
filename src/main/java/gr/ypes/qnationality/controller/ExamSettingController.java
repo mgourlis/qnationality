@@ -1,13 +1,15 @@
 package gr.ypes.qnationality.controller;
 
 import gr.ypes.qnationality.dto.ExamSettingDTO;
+import gr.ypes.qnationality.dto.QuestionCategoryAndDifficultySettingDTO;
 import gr.ypes.qnationality.model.Difficulty;
-import gr.ypes.qnationality.model.DifficultySetting;
 import gr.ypes.qnationality.model.ExamSetting;
 import gr.ypes.qnationality.model.QuestionCategory;
+import gr.ypes.qnationality.model.QuestionCategoryAndDifficultySetting;
 import gr.ypes.qnationality.service.IDifficultyService;
 import gr.ypes.qnationality.service.IExamSettingService;
 import gr.ypes.qnationality.service.IQuestionCategoryService;
+import gr.ypes.qnationality.service.IQuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -24,7 +26,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.persistence.EntityNotFoundException;
 import javax.validation.Valid;
-import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -40,6 +41,9 @@ public class ExamSettingController {
 
     @Autowired
     IDifficultyService difficultyService;
+
+    @Autowired
+    IQuestionService questionService;
 
     @RequestMapping("/")
     public ModelAndView getExamSettings(ModelAndView modelAndView, Pageable pageable){
@@ -72,8 +76,6 @@ public class ExamSettingController {
         if(examSetting == null){
             throw new HttpClientErrorException(HttpStatus.NOT_FOUND);
         }
-        modelAndView.addObject("difficulties", difficultyService.findAll());
-        modelAndView.addObject("questionCategories",questionCategoryService.findAll());
         modelAndView.addObject("examSetting", examSettingDTO);
         modelAndView.setViewName("/admin/examsetting/editExamSetting");
         return modelAndView;
@@ -101,42 +103,21 @@ public class ExamSettingController {
         }
         float difficultySum = 0;
         int index=0;
-        List<DifficultySetting> inputDifficultySettings = editExamSetting.getDifficultySettings();
-        for (float difficultySetting : examSettingDTO.getDifficultySettings()) {
-            if(difficultySetting < 0 || 100 < difficultySetting){
+        List<QuestionCategoryAndDifficultySetting> inputQuestionCategoryAndDifficultySettings = editExamSetting.getQuestionCategoryAndDifficultySettings();
+        for (QuestionCategoryAndDifficultySettingDTO qCADDTO : examSettingDTO.getQuestionCategoryAndDifficultySettings()) {
+            int maxQuestions = questionService.countQuestionsByQuestionCategoryNameAndDifficultyLevelNumber(qCADDTO.getQuestionCategoryName(),qCADDTO.getDifficultyLevelNumber());
+            if(qCADDTO.getNumOfQuestions() < 0 || qCADDTO.getNumOfQuestions() > maxQuestions){
                 bindingResult
-                        .rejectValue("difficultySettings[" + index + "]", "error.examSetting.difficultySettings",
-                                "The percentage must be between 0.0% - 100.0% ");
+                        .rejectValue("QuestionCategoryAndDifficultySettings[" + index + "]", "error.examSetting.difficultySettings",
+                                "Error! the question number must be between Min: 0 and Max:" + maxQuestions);
             }
             try {
-                inputDifficultySettings.get(index).setPercentage(examSettingDTO.getDifficultySettings().get(index));
+                inputQuestionCategoryAndDifficultySettings.get(index).setNumOfQuestions(examSettingDTO.getQuestionCategoryAndDifficultySettings().get(index).getNumOfQuestions());
             }catch (IndexOutOfBoundsException e){
                 errorMessageBox += "Something went wrong, please retry.\n";
                 checkFlag = true;
             }
             index++;
-            difficultySum += difficultySetting;
-        }
-        if(examSettingDTO.getQuestionCategories().isEmpty()){
-            errorMessageBox += "Select at least one Question Category.\n";
-            checkFlag = true;
-        }
-        List<QuestionCategory> inputCategories = new ArrayList<>();
-        for (long questionCategoryId : examSettingDTO.getQuestionCategories()) {
-            if(questionCategoryId != 0) {
-                QuestionCategory questionCategory = questionCategoryService.getOne(questionCategoryId);
-                if (questionCategory == null)
-                {
-                    bindingResult
-                            .rejectValue("questionCategories" + questionCategory.getId(), "error.examSetting.questionCategories",
-                                    "Question Category is invalid");
-                }
-                inputCategories.add(questionCategory);
-            }
-        }
-        if(difficultySum > 100 || 99 > difficultySum){
-            errorMessageBox +="The sum of the percentage must be between 99.0% - 100.0%.\n";
-            checkFlag = true;
         }
         if (bindingResult.hasErrors() || checkFlag) {
             if (!errorMessageBox.equals("")){
@@ -149,9 +130,7 @@ public class ExamSettingController {
         else{
             editExamSetting.setName(examSettingDTO.getName());
             editExamSetting.setEnabled(examSettingDTO.isEnabled());
-            editExamSetting.setNumOfQuestions(examSettingDTO.getNumOfQuestions());
-            editExamSetting.setQuestionCategories(inputCategories);
-            editExamSetting.setDifficultySettings(inputDifficultySettings);
+            editExamSetting.setQuestionCategoryAndDifficultySettings(inputQuestionCategoryAndDifficultySettings);
             examSettingService.save(editExamSetting);
             modelAndView.setViewName("redirect:/admin/exam-setting/" + editExamSetting.getId());
         }
@@ -163,9 +142,8 @@ public class ExamSettingController {
         ModelAndView modelAndView = new ModelAndView();
         ExamSettingDTO examSettingDTO = new ExamSettingDTO();
         List<Difficulty> difficulties = difficultyService.findAll();
-        examSettingDTO.init(difficulties);
-        modelAndView.addObject("difficulties", difficulties);
-        modelAndView.addObject("questionCategories",questionCategoryService.findAll());
+        List<QuestionCategory> questionCategories = questionCategoryService.findAll();
+        examSettingDTO.init(questionCategories, difficulties);
         modelAndView.addObject("examSetting", examSettingDTO);
         modelAndView.setViewName("admin/examsetting/newExamSetting");
         return modelAndView;
@@ -183,44 +161,22 @@ public class ExamSettingController {
                     .rejectValue("name", "error.examSetting",
                             "There is already an Exam Setting with the name provided");
         }
-        float difficultySum = 0;
-        int index=0;
-        List<DifficultySetting> inputDifficultySettings = newExamSetting.getDifficultySettings();
-        for (float difficultySetting : examSettingDTO.getDifficultySettings()) {
-            if(difficultySetting < 0 || 100 < difficultySetting){
+        int index = 0;
+        List<QuestionCategoryAndDifficultySetting> inputQuestionCategoryAndDifficultySettings = newExamSetting.getQuestionCategoryAndDifficultySettings();
+        for (QuestionCategoryAndDifficultySettingDTO qCADDTO : examSettingDTO.getQuestionCategoryAndDifficultySettings()) {
+            int maxQuestions = questionService.countQuestionsByQuestionCategoryNameAndDifficultyLevelNumber(qCADDTO.getQuestionCategoryName(),qCADDTO.getDifficultyLevelNumber());
+            if(qCADDTO.getNumOfQuestions() < 0 || qCADDTO.getNumOfQuestions() > maxQuestions){
                 bindingResult
-                        .rejectValue("difficultySettings[" + index + "]", "error.examSetting.difficultySettings",
-                                "The percentage must be between 0.0% - 100.0% ");
+                        .rejectValue("QuestionCategoryAndDifficultySettings[" + index + "]", "error.examSetting.difficultySettings",
+                                "Error! the question number must be between Min: 0 and Max:" + maxQuestions);
             }
             try {
-                inputDifficultySettings.get(index).setPercentage(examSettingDTO.getDifficultySettings().get(index));
+                inputQuestionCategoryAndDifficultySettings.get(index).setNumOfQuestions(examSettingDTO.getQuestionCategoryAndDifficultySettings().get(index).getNumOfQuestions());
             }catch (IndexOutOfBoundsException e){
                 errorMessageBox += "Something went wrong, please retry.\n";
                 checkFlag = true;
             }
             index++;
-            difficultySum += difficultySetting;
-        }
-        if(examSettingDTO.getQuestionCategories().isEmpty()){
-            errorMessageBox += "Select at least one Question Category.\n";
-            checkFlag = true;
-        }
-        List<QuestionCategory> inputCategories = new ArrayList<>();
-        for (long questionCategoryId : examSettingDTO.getQuestionCategories()) {
-            if(questionCategoryId != 0) {
-                QuestionCategory questionCategory = questionCategoryService.getOne(questionCategoryId);
-                if (questionCategory == null)
-                {
-                    bindingResult
-                            .rejectValue("questionCategories" + questionCategory.getId(), "error.examSetting.questionCategories",
-                                    "Question Category is invalid");
-                }
-                inputCategories.add(questionCategory);
-            }
-        }
-        if(difficultySum > 100 || 99 > difficultySum){
-            errorMessageBox +="The sum of the percentage must be between 99.0% - 100.0%.\n";
-            checkFlag = true;
         }
         if (bindingResult.hasErrors() || checkFlag) {
             if (!errorMessageBox.equals("")){
@@ -233,16 +189,13 @@ public class ExamSettingController {
         else{
             newExamSetting.setName(examSettingDTO.getName());
             newExamSetting.setEnabled(examSettingDTO.isEnabled());
-            newExamSetting.setNumOfQuestions(examSettingDTO.getNumOfQuestions());
-            newExamSetting.setQuestionCategories(inputCategories);
-            newExamSetting.setDifficultySettings(inputDifficultySettings);
+            newExamSetting.setQuestionCategoryAndDifficultySettings(inputQuestionCategoryAndDifficultySettings);
             examSettingService.save(newExamSetting);
 
             ExamSettingDTO newExamSettingDTO = new ExamSettingDTO();
             List<Difficulty> difficulties = difficultyService.findAll();
-            newExamSettingDTO.init(difficulties);
-            modelAndView.addObject("difficulties", difficulties);
-            modelAndView.addObject("questionCategories",questionCategoryService.findAll());
+            List<QuestionCategory> questionCategories = questionCategoryService.findAll();
+            newExamSettingDTO.init(questionCategories, difficulties);
             modelAndView.addObject("examSetting", newExamSettingDTO);
             modelAndView.addObject("successMessageBox", "Exam Setting was created successfully");
             modelAndView.setViewName("admin/examsetting/newExamSetting");
@@ -257,5 +210,6 @@ public class ExamSettingController {
         modelAndView.setViewName("redirect:/admin/exam-setting/");
         return modelAndView;
     }
+
 
 }

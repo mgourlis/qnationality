@@ -1,8 +1,6 @@
 package gr.ypes.qnationality.service;
 
-import gr.ypes.qnationality.model.Difficulty;
-import gr.ypes.qnationality.model.DifficultySetting;
-import gr.ypes.qnationality.model.ExamSetting;
+import gr.ypes.qnationality.model.*;
 import gr.ypes.qnationality.repository.ExamSettingRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -23,6 +21,9 @@ public class ExamSettingServiceImpl implements IExamSettingService {
 
     @Autowired
     IDifficultyService difficultyService;
+
+    @Autowired
+    IQuestionCategoryService questionCategoryService;
 
     @Override
     public ExamSetting getOne(long id) {
@@ -58,15 +59,20 @@ public class ExamSettingServiceImpl implements IExamSettingService {
     public ExamSetting createExamSetting() {
         ExamSetting examSetting = new ExamSetting();
         List<Difficulty> difficulties = difficultyService.findAll();
+        List<QuestionCategory> questionCategories = questionCategoryService.findAll();
         Collections.sort(difficulties);
-        List<DifficultySetting> difficultySettings = new ArrayList<>();
-        for (Difficulty difficulty: difficulties) {
-            DifficultySetting difficultySetting = new DifficultySetting();
-            difficultySetting.setDifficulty(difficulty);
-            difficultySetting.setPercentage(0);
-            difficultySettings.add(difficultySetting);
+        Collections.sort(questionCategories);
+        List<QuestionCategoryAndDifficultySetting> questionCategoryAndDifficultySettings = new ArrayList<>();
+        for (QuestionCategory questionCategory: questionCategories) {
+            for(Difficulty difficulty : difficulties) {
+                QuestionCategoryAndDifficultySetting questionCategoryAndDifficultySetting = new QuestionCategoryAndDifficultySetting();
+                questionCategoryAndDifficultySetting.setNumOfQuestions(0);
+                questionCategoryAndDifficultySetting.setDifficulty(difficulty);
+                questionCategoryAndDifficultySetting.setQuestionCategory(questionCategory);
+                questionCategoryAndDifficultySettings.add(questionCategoryAndDifficultySetting);
+            }
         }
-        examSetting.setDifficultySettings(difficultySettings);
+        examSetting.setQuestionCategoryAndDifficultySettings(questionCategoryAndDifficultySettings);
         return examSetting;
     }
 
@@ -82,10 +88,8 @@ public class ExamSettingServiceImpl implements IExamSettingService {
             ExamSetting oldExamSetting = examSettingRepository.findExamSettingByIdAndDeleted(examSetting.getId(),false);
             if(oldExamSetting != null){
                 oldExamSetting.setName(examSetting.getName());
-                oldExamSetting.setNumOfQuestions(examSetting.getNumOfQuestions());
                 oldExamSetting.setEnabled(examSetting.isEnabled());
-                oldExamSetting.setQuestionCategories(examSetting.getQuestionCategories());
-                oldExamSetting.setDifficultySettings(examSetting.getDifficultySettings());
+                oldExamSetting.setQuestionCategoryAndDifficultySettings(examSetting.getQuestionCategoryAndDifficultySettings());
                 examSettingRepository.save(oldExamSetting);
             }else{
                 throw new EntityNotFoundException("Can't save Exam Setting. Invalid Exam Setting");
@@ -98,8 +102,8 @@ public class ExamSettingServiceImpl implements IExamSettingService {
         ExamSetting examSetting = examSettingRepository.findExamSettingByIdAndDeleted(id,false);
         if(examSetting != null){
             examSetting.setDeleted(true);
-            for (DifficultySetting difficultySetting : examSetting.getDifficultySettings()) {
-                difficultySetting.setDeleted(true);
+            for (QuestionCategoryAndDifficultySetting questionCategoryAndDifficultySetting : examSetting.getQuestionCategoryAndDifficultySettings()) {
+                questionCategoryAndDifficultySetting.setDeleted(true);
             }
             examSettingRepository.save(examSetting);
         }else{

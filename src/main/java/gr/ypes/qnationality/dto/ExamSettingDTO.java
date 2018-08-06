@@ -1,9 +1,9 @@
 package gr.ypes.qnationality.dto;
 
 import gr.ypes.qnationality.model.Difficulty;
-import gr.ypes.qnationality.model.DifficultySetting;
 import gr.ypes.qnationality.model.ExamSetting;
 import gr.ypes.qnationality.model.QuestionCategory;
+import gr.ypes.qnationality.model.QuestionCategoryAndDifficultySetting;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
@@ -23,10 +23,7 @@ public class ExamSettingDTO {
     private boolean enabled;
 
     @NotEmpty
-    private List<Float> difficultySettings;
-
-    @NotEmpty
-    private List<Long> questionCategories;
+    private List<QuestionCategoryAndDifficultySettingDTO> questionCategoryAndDifficultySettings ;
 
     public long getId() {
         return id;
@@ -44,14 +41,6 @@ public class ExamSettingDTO {
         this.name = name;
     }
 
-    public int getNumOfQuestions() {
-        return numOfQuestions;
-    }
-
-    public void setNumOfQuestions(int numOfQuestions) {
-        this.numOfQuestions = numOfQuestions;
-    }
-
     public boolean isEnabled() {
         return enabled;
     }
@@ -60,45 +49,37 @@ public class ExamSettingDTO {
         this.enabled = enabled;
     }
 
-    public List<Float> getDifficultySettings() {
-        return difficultySettings;
+    public List<QuestionCategoryAndDifficultySettingDTO> getQuestionCategoryAndDifficultySettings() {
+        return questionCategoryAndDifficultySettings;
     }
 
-    public void setDifficultySettings(List<Float> difficultySettings) {
-        this.difficultySettings = difficultySettings;
-    }
-
-    public List<Long> getQuestionCategories() {
-        return questionCategories;
-    }
-
-    public void setQuestionCategories(List<Long> questionCategories) {
-        this.questionCategories = questionCategories;
+    public void setQuestionCategoryAndDifficultySettings(List<QuestionCategoryAndDifficultySettingDTO> questionCategoryAndDifficultySettings) {
+        this.questionCategoryAndDifficultySettings = questionCategoryAndDifficultySettings;
     }
 
     public void init(ExamSetting examSetting) throws IllegalArgumentException{
         this.setId(examSetting.getId());
         this.setName(examSetting.getName());
-        this.setNumOfQuestions(examSetting.getNumOfQuestions());
         this.setEnabled(examSetting.isEnabled());
-        List<Long> questionCategories = new ArrayList<>();
-        for (QuestionCategory questionCategory : examSetting.getQuestionCategories()) {
-            questionCategories.add(questionCategory.getId());
+        List<QuestionCategoryAndDifficultySettingDTO> questionCategoryAndDifficultySettings = new ArrayList<>();
+        for (QuestionCategoryAndDifficultySetting questionCategoryAndDifficultySetting : examSetting.getQuestionCategoryAndDifficultySettings()) {
+            QuestionCategoryAndDifficultySettingDTO qCADDTO = new QuestionCategoryAndDifficultySettingDTO();
+            qCADDTO.init(questionCategoryAndDifficultySetting.getDifficulty(),questionCategoryAndDifficultySetting.getQuestionCategory(),questionCategoryAndDifficultySetting.getNumOfQuestions());
+            questionCategoryAndDifficultySettings.add(qCADDTO);
         }
-        this.setQuestionCategories(questionCategories);
-        List<Float> difficultySettings = new ArrayList<>();
-        for (DifficultySetting difficultySetting : examSetting.getDifficultySettings()) {
-            difficultySettings.add(difficultySetting.getPercentage());
-        }
-        this.setDifficultySettings(difficultySettings);
+        this.setQuestionCategoryAndDifficultySettings(questionCategoryAndDifficultySettings);
     }
 
-    public void init(List<Difficulty> difficulties){
-        List<Float> difficultySettings = new ArrayList<>();
-        for (Difficulty difficulty : difficulties){
-            difficultySettings.add((float) 0);
+    public void init(List<QuestionCategory> questionCategories, List<Difficulty> difficulties){
+        List<QuestionCategoryAndDifficultySettingDTO> questionCategoryAndDifficultySettings = new ArrayList<>();
+        for (QuestionCategory questionCategory : questionCategories){
+            for(Difficulty difficulty : difficulties) {
+                QuestionCategoryAndDifficultySettingDTO qCADDTO = new QuestionCategoryAndDifficultySettingDTO();
+                qCADDTO.init(difficulty,questionCategory);
+                questionCategoryAndDifficultySettings.add(qCADDTO);
+            }
         }
-        this.setDifficultySettings(difficultySettings);
+        this.setQuestionCategoryAndDifficultySettings(questionCategoryAndDifficultySettings);
     }
 }
 

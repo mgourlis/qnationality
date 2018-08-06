@@ -16,14 +16,6 @@
 					</div>
 				</div>
 
-				<div class="form-group">
-					<div class="col-sm-9">
-						<label><span th:text="#{examsetting.numofquestions}"></span></label>
-						<label	th:if="${#fields.hasErrors('numOfQuestions')}" th:errors="*{numOfQuestions}" class="validation-message"></label>
-						<input type="text" th:field="*{numOfQuestions}" th:placeholder="#{examsetting.numofquestions}" class="form-control" />
-					</div>
-				</div>
-
 				<div class="form-check">
 					<label th:if="${#fields.hasErrors('enabled')}" th:errors="*{enabled}" class="validation-message"></label>
 					<input type="checkbox" th:field="*{enabled}" th:value="*{enabled}" class="form-check-input" />
@@ -32,21 +24,14 @@
 
 				<br/>
 				<div class="form-group">
-					<label class="col-sm-9"><span th:text="#{questioncategory.questioncategories}"></span></label>
-					<div class="col-sm-9" th:each="questionCategory : ${questionCategories}">
-						<label	th:if="${#fields.hasErrors('*{questionCategories}')}" th:errors="*{questionCategories}" class="validation-message"></label>
-						<input type="checkbox" th:field="*{questionCategories}" th:value="${questionCategory.getId()}" />
-						<label th:for="${#ids.prev('questionCategories')}" th:text="${questionCategory.name}">Category</label>
-					</div>
-				</div>
-
-				<br/>
-				<div class="form-group">
 					<label class="col-sm-9"><span th:text="#{difficulty.percentage}"></span></label>
-					<div class="col-sm-9" th:each="difficulty,iterationStatus : ${difficulties}">
-						<label	th:if="${#fields.hasErrors('*{difficultySettings[__${iterationStatus.index}__]}')}" th:errors="*{difficultySettings[__${iterationStatus.index}__]}" class="validation-message"></label>
-						<label th:for="*{difficultySettings[__${iterationStatus.index}__]}" th:text="${difficulty.level}">Difficulty</label>
-						<input type="text" th:field="*{difficultySettings[__${iterationStatus.index}__]}" th:value="*{difficultySettings[__${iterationStatus.index}__]}" />
+					<div class="col-sm-9" th:each="qCAD,iterationStatus : ${examSetting.getQuestionCategoryAndDifficultySettings()}">
+						<label	th:if="${#fields.hasErrors('*{examSetting.questionCategoryAndDifficultySettings[__${iterationStatus.index}__]}')}" th:errors="*{examSetting.questionCategoryAndDifficultySettings[__${iterationStatus.index}__]}" class="validation-message"></label>
+						<label th:for="*{examSetting.questionCategoryAndDifficultySettings[__${iterationStatus.index}__]}" th:text="${qCAD.gettQuestionCategoryName() + '-' + qCAD.getDifficultyLevel()}">qCAD</label>
+						<input type="hidden" th:field="*{examSetting.questionCategoryAndDifficultySettings[__${iterationStatus.index}__]}" th:value="*{examSetting.questionCategoryAndDifficultySettings[__${iterationStatus.index}__].questionCategoryName}" />
+						<input type="hidden" th:field="*{examSetting.questionCategoryAndDifficultySettings[__${iterationStatus.index}__]}" th:value="*{examSetting.questionCategoryAndDifficultySettings[__${iterationStatus.index}__].difficultyLevel}" />
+						<input type="hidden" th:field="*{examSetting.questionCategoryAndDifficultySettings[__${iterationStatus.index}__]}" th:value="*{examSetting.questionCategoryAndDifficultySettings[__${iterationStatus.index}__].difficultyLevelNumber}" />
+						<input type="text" th:field="*{examSetting.questionCategoryAndDifficultySettings[__${iterationStatus.index}__]}" th:value="*{examSetting.questionCategoryAndDifficultySettings[__${iterationStatus.index}__].numOfQuestions}" />
 					</div>
 				</div>
 
