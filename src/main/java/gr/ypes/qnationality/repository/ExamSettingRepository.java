@@ -13,6 +13,7 @@ public interface ExamSettingRepository extends JpaRepository<ExamSetting,Long> {
     public ExamSetting findExamSettingByIdAndDeleted(long id, boolean deleted);
     public ExamSetting findExamSettingByNameAndDeleted(String name, boolean deleted);
     public List<ExamSetting> findExamSettingsByDeleted(boolean deleted);
+    public List<ExamSetting> findExamSettingsByDeletedOrderByNameAsc(boolean deleted);
     public Page<ExamSetting> findExamSettingsByDeleted(boolean deleted, Pageable pageable);
     public List<ExamSetting> findExamSettingsByEnabledAndDeleted(boolean enabled, boolean deleted);
     public Page<ExamSetting> findExamSettingsByEnabledAndDeleted(boolean enabled, boolean deleted, Pageable pageable);

@@ -74,7 +74,7 @@ public class UserExamController {
         }catch (Exception e){
             modelAndView.addObject("downloadtrue", "false");
         }
-        modelAndView.addObject("examSettings", examSettingService.findAll());
+        modelAndView.addObject("examSettings", examSettingService.findAllSortedAsc());
         modelAndView.addObject("exam",createExamDTO);
         modelAndView.setViewName("user/exam/createExam");
         return modelAndView;
@@ -93,18 +93,18 @@ public class UserExamController {
                             "Exam Setting does not exist");
         }
         if (bindingResult.hasErrors()) {
-            modelAndView.addObject("examSettings", examSettingService.findAll());
+            modelAndView.addObject("examSettings", examSettingService.findAllSortedAsc());
             modelAndView.setViewName("user/exam/createExam");
         } else {
             try {
                 String uid = examService.createExam(createExamDTO.getExam(examSetting),createExamDTO.getExamSettingId());
                 modelAndView.addObject("successMessageBox","exam with uid: " + uid + " created successfully");
             }catch (Exception e){
-                modelAndView.addObject("examSettings", examSettingService.findAll());
+                modelAndView.addObject("examSettings", examSettingService.findAllSortedAsc());
                 modelAndView.addObject("errorMessageBox", "Error: " + e.getMessage());
             }
             modelAndView.addObject("downloadtrue", "true");
-            modelAndView.addObject("examSettings", examSettingService.findAll());
+            modelAndView.addObject("examSettings", examSettingService.findAllSortedAsc());
             modelAndView.setViewName("user/exam/createExam");
         }
         return modelAndView;

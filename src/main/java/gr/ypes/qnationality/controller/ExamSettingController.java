@@ -82,7 +82,7 @@ public class ExamSettingController {
     }
 
     @RequestMapping(value="/edit/{id}", method = RequestMethod.POST)
-    public ModelAndView editExamSetting(@PathVariable("id") long id, @Valid @ModelAttribute("examSettingDTO") ExamSettingDTO examSettingDTO, BindingResult bindingResult){
+    public ModelAndView editExamSetting(@PathVariable("id") long id, @Valid @ModelAttribute("examSetting") ExamSettingDTO examSettingDTO, BindingResult bindingResult){
         ModelAndView modelAndView = new ModelAndView();
         ExamSetting editExamSetting = examSettingService.getOne(id);
         boolean checkFlag = false;
@@ -90,10 +90,7 @@ public class ExamSettingController {
         if(editExamSetting == null){
             throw new EntityNotFoundException();
         }
-
-        //TODO - check if used
-
-        ExamSetting checkName = examSettingService.findExamSettingByName(editExamSetting.getName());
+        ExamSetting checkName = examSettingService.findExamSettingByName(examSettingDTO.getName());
         if(checkName != null){
             if(checkName.getId() != editExamSetting.getId()) {
                 bindingResult
@@ -101,14 +98,13 @@ public class ExamSettingController {
                                 "There is already an Exam Setting with the name provided");
             }
         }
-        float difficultySum = 0;
         int index=0;
         List<QuestionCategoryAndDifficultySetting> inputQuestionCategoryAndDifficultySettings = editExamSetting.getQuestionCategoryAndDifficultySettings();
         for (QuestionCategoryAndDifficultySettingDTO qCADDTO : examSettingDTO.getQuestionCategoryAndDifficultySettings()) {
             int maxQuestions = questionService.countQuestionsByQuestionCategoryNameAndDifficultyLevelNumber(qCADDTO.getQuestionCategoryName(),qCADDTO.getDifficultyLevelNumber());
             if(qCADDTO.getNumOfQuestions() < 0 || qCADDTO.getNumOfQuestions() > maxQuestions){
                 bindingResult
-                        .rejectValue("QuestionCategoryAndDifficultySettings[" + index + "]", "error.examSetting.difficultySettings",
+                        .rejectValue("questionCategoryAndDifficultySettings[" + index + "]", "error.examSetting.questionCategoryAndDifficultySettings",
                                 "Error! the question number must be between Min: 0 and Max:" + maxQuestions);
             }
             try {
@@ -123,8 +119,6 @@ public class ExamSettingController {
             if (!errorMessageBox.equals("")){
                 modelAndView.addObject("errorMessageBox", errorMessageBox);
             }
-            modelAndView.addObject("difficulties", difficultyService.findAll());
-            modelAndView.addObject("questionCategories",questionCategoryService.findAll());
             modelAndView.setViewName("/admin/examsetting/editExamSetting");
         }
         else{
@@ -167,7 +161,7 @@ public class ExamSettingController {
             int maxQuestions = questionService.countQuestionsByQuestionCategoryNameAndDifficultyLevelNumber(qCADDTO.getQuestionCategoryName(),qCADDTO.getDifficultyLevelNumber());
             if(qCADDTO.getNumOfQuestions() < 0 || qCADDTO.getNumOfQuestions() > maxQuestions){
                 bindingResult
-                        .rejectValue("QuestionCategoryAndDifficultySettings[" + index + "]", "error.examSetting.difficultySettings",
+                        .rejectValue("questionCategoryAndDifficultySettings[" + index + "]", "error.examSetting.questionCategoryAndDifficultySettings",
                                 "Error! the question number must be between Min: 0 and Max:" + maxQuestions);
             }
             try {

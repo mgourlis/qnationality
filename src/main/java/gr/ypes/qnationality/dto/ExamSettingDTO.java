@@ -78,5 +78,6 @@ public class ExamSettingDTO {
         }
         this.setQuestionCategoryAndDifficultySettings(questionCategoryAndDifficultySettings);
     }
+
 }
 

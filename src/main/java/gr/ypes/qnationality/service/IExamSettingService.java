@@ -9,6 +9,7 @@ import java.util.List;
 public interface IExamSettingService {
     public ExamSetting getOne(long id);
     public List<ExamSetting> findAll();
+    public List<ExamSetting> findAllSortedAsc();
     public Page<ExamSetting> findAll(Pageable pageable);
     public ExamSetting findExamSettingByName(String name);
     public List<ExamSetting> findExamSettingsByEnabled(boolean enabled);

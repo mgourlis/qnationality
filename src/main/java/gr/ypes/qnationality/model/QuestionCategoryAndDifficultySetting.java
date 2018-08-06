@@ -3,6 +3,7 @@ package gr.ypes.qnationality.model;
 
 import javax.persistence.*;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "questioncategoryanddifficultyseting")
@@ -12,6 +13,7 @@ public class QuestionCategoryAndDifficultySetting extends BaseEntity {
 
     @Column(name = "number_of_questions")
     @Min(0)
+    @NotNull
     private int numOfQuestions;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY, cascade = {CascadeType.MERGE,CascadeType.DETACH,CascadeType.REFRESH})

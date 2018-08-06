@@ -36,6 +36,11 @@ public class ExamSettingServiceImpl implements IExamSettingService {
     }
 
     @Override
+    public List<ExamSetting> findAllSortedAsc() {
+        return examSettingRepository.findExamSettingsByDeletedOrderByNameAsc(false);
+    }
+
+    @Override
     public Page<ExamSetting> findAll(Pageable pageable) {
         return examSettingRepository.findExamSettingsByDeleted(false, pageable);
     }

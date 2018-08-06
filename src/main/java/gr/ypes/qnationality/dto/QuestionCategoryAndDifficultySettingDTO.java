@@ -5,10 +5,12 @@ import gr.ypes.qnationality.model.QuestionCategory;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
 public class QuestionCategoryAndDifficultySettingDTO {
 
     @Min(0)
+    @NotEmpty
     private int numOfQuestions;
 
     @NotEmpty

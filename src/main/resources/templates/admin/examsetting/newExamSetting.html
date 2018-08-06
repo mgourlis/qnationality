@@ -4,6 +4,16 @@
       layout:decorate="~{layouts/default}" >
 <body>
 <div id="main" layout:fragment="content">
+	<script>
+        function isNumber(evt) {
+            evt = (evt) ? evt : window.event;
+            var charCode = (evt.which) ? evt.which : evt.keyCode;
+            if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+                return false;
+            }
+            return true;
+        }
+	</script>
 	<div class="row">
 		<div class="col-md-6 col-md-offset-3">
 			<form autocomplete="off" th:action="@{'/admin/exam-setting/new'}" th:object="${examSetting}" method="post" class="form-horizontal" role="form">
@@ -25,13 +35,15 @@
 				<br/>
 				<div class="form-group">
 					<label class="col-sm-9"><span th:text="#{examsetting.qcadnum}"></span></label>
+					<br>
 					<div class="col-sm-9" th:each="qCAD,iterationStatus : ${examSetting.getQuestionCategoryAndDifficultySettings()}">
 						<label	th:if="${#fields.hasErrors('*{questionCategoryAndDifficultySettings[__${iterationStatus.index}__]}')}" th:errors="*{questionCategoryAndDifficultySettings[__${iterationStatus.index}__]}" class="validation-message"></label>
+						<br>
 						<label th:for="*{questionCategoryAndDifficultySettings[__${iterationStatus.index}__]}" th:text="${qCAD.getQuestionCategoryName() + ' - ' + qCAD.getDifficultyLevel()}">qCAD</label><br/><span th:text="#{examsetting.numofquestions}"></span>
 						<input type="hidden" th:field="*{questionCategoryAndDifficultySettings[__${iterationStatus.index}__].questionCategoryName}" th:value="*{questionCategoryAndDifficultySettings[__${iterationStatus.index}__].questionCategoryName}" />
 						<input type="hidden" th:field="*{questionCategoryAndDifficultySettings[__${iterationStatus.index}__].difficultyLevel}" th:value="*{questionCategoryAndDifficultySettings[__${iterationStatus.index}__].difficultyLevel}" />
 						<input type="hidden" th:field="*{questionCategoryAndDifficultySettings[__${iterationStatus.index}__].difficultyLevelNumber}" th:value="*{questionCategoryAndDifficultySettings[__${iterationStatus.index}__].difficultyLevelNumber}" />
-						<input type="text" th:field="*{questionCategoryAndDifficultySettings[__${iterationStatus.index}__].numOfQuestions}" th:value="*{questionCategoryAndDifficultySettings[__${iterationStatus.index}__].numOfQuestions}" />
+						<input type="text" th:field="*{questionCategoryAndDifficultySettings[__${iterationStatus.index}__].numOfQuestions}" th:value="*{questionCategoryAndDifficultySettings[__${iterationStatus.index}__].numOfQuestions}" onkeypress="return isNumber(event)" />
 					</div>
 				</div>
 
