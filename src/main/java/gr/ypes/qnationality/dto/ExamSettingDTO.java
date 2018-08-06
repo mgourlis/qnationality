@@ -17,9 +17,6 @@ public class ExamSettingDTO {
     @NotEmpty
     private String name;
 
-    @Min(1)
-    private int numOfQuestions;
-
     private boolean enabled;
 
     @NotEmpty

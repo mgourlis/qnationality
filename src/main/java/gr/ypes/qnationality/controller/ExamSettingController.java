@@ -182,8 +182,6 @@ public class ExamSettingController {
             if (!errorMessageBox.equals("")){
                 modelAndView.addObject("errorMessageBox", errorMessageBox);
             }
-            modelAndView.addObject("difficulties", difficultyService.findAll());
-            modelAndView.addObject("questionCategories",questionCategoryService.findAll());
             modelAndView.setViewName("/admin/examsetting/newExamSetting");
         }
         else{

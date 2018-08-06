@@ -24,14 +24,14 @@
 
 				<br/>
 				<div class="form-group">
-					<label class="col-sm-9"><span th:text="#{difficulty.percentage}"></span></label>
+					<label class="col-sm-9"><span th:text="#{examsetting.qcadnum}"></span></label>
 					<div class="col-sm-9" th:each="qCAD,iterationStatus : ${examSetting.getQuestionCategoryAndDifficultySettings()}">
-						<label	th:if="${#fields.hasErrors('*{examSetting.questionCategoryAndDifficultySettings[__${iterationStatus.index}__]}')}" th:errors="*{examSetting.questionCategoryAndDifficultySettings[__${iterationStatus.index}__]}" class="validation-message"></label>
-						<label th:for="*{examSetting.questionCategoryAndDifficultySettings[__${iterationStatus.index}__]}" th:text="${qCAD.gettQuestionCategoryName() + '-' + qCAD.getDifficultyLevel()}">qCAD</label>
-						<input type="hidden" th:field="*{examSetting.questionCategoryAndDifficultySettings[__${iterationStatus.index}__]}" th:value="*{examSetting.questionCategoryAndDifficultySettings[__${iterationStatus.index}__].questionCategoryName}" />
-						<input type="hidden" th:field="*{examSetting.questionCategoryAndDifficultySettings[__${iterationStatus.index}__]}" th:value="*{examSetting.questionCategoryAndDifficultySettings[__${iterationStatus.index}__].difficultyLevel}" />
-						<input type="hidden" th:field="*{examSetting.questionCategoryAndDifficultySettings[__${iterationStatus.index}__]}" th:value="*{examSetting.questionCategoryAndDifficultySettings[__${iterationStatus.index}__].difficultyLevelNumber}" />
-						<input type="text" th:field="*{examSetting.questionCategoryAndDifficultySettings[__${iterationStatus.index}__]}" th:value="*{examSetting.questionCategoryAndDifficultySettings[__${iterationStatus.index}__].numOfQuestions}" />
+						<label	th:if="${#fields.hasErrors('*{questionCategoryAndDifficultySettings[__${iterationStatus.index}__]}')}" th:errors="*{questionCategoryAndDifficultySettings[__${iterationStatus.index}__]}" class="validation-message"></label>
+						<label th:for="*{questionCategoryAndDifficultySettings[__${iterationStatus.index}__]}" th:text="${qCAD.getQuestionCategoryName() + ' - ' + qCAD.getDifficultyLevel()}">qCAD</label><br/><span th:text="#{examsetting.numofquestions}"></span>
+						<input type="hidden" th:field="*{questionCategoryAndDifficultySettings[__${iterationStatus.index}__].questionCategoryName}" th:value="*{questionCategoryAndDifficultySettings[__${iterationStatus.index}__].questionCategoryName}" />
+						<input type="hidden" th:field="*{questionCategoryAndDifficultySettings[__${iterationStatus.index}__].difficultyLevel}" th:value="*{questionCategoryAndDifficultySettings[__${iterationStatus.index}__].difficultyLevel}" />
+						<input type="hidden" th:field="*{questionCategoryAndDifficultySettings[__${iterationStatus.index}__].difficultyLevelNumber}" th:value="*{questionCategoryAndDifficultySettings[__${iterationStatus.index}__].difficultyLevelNumber}" />
+						<input type="text" th:field="*{questionCategoryAndDifficultySettings[__${iterationStatus.index}__].numOfQuestions}" th:value="*{questionCategoryAndDifficultySettings[__${iterationStatus.index}__].numOfQuestions}" />
 					</div>
 				</div>
 
