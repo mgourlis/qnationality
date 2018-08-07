@@ -4,7 +4,35 @@
       layout:decorate="~{layouts/default}" >
 <body>
 <div id="main" layout:fragment="content">
-    <div>This is home page content</div>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <h2 th:text="#{question.question} "></h2>
+            </div>
+            <div class="col-md-6">
+                <div class="pull-right">
+                    <a th:href="${'/admin/question/'}" class="btn btn-primary mb-2"><span th:text="#{general.gobacktolist}"></span></a>
+                    <a th:href="${'/admin/question/edit/' + question.getId()}" class="btn btn-warning mb-2"><span th:text="#{general.edit}"></span></a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <label th:text="#{question.shortname} + ': ' "></label>
+            <span th:text="${question.shortname}"></span>
+            <br/>
+            <label th:text="#{question.text} + ': ' "></label><br/>
+            <span th:text="${question.questiontext}"></span>
+            <br/>
+            <br/>
+            <label th:text="#{questioncategory.questioncategory} + ': ' "></label>
+            <span th:text="${question.questionCategory.name}"></span>
+            <br/>
+            <br/>
+            <label th:text="#{difficulty.difficulty} + ': ' "></label>
+            <span th:text="${question.questionDifficulty.level}"></span>
+            <br/>
+        </div>
+    </div>
 </div>
 </body>
 </html>

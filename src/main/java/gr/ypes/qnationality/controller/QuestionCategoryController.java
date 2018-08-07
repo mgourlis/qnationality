@@ -78,10 +78,13 @@ public class QuestionCategoryController {
         if(editQuestionCategory == null){
             throw new EntityNotFoundException();
         }
-        if(questionCategoryService.findQuestionCategoryByName(questionCategoryDTO.getName()) != null){
-            bindingResult
-                    .rejectValue("name", "error.questionCategory",
-                            "There is already a Question Category with the name provided");
+        QuestionCategory duplicateQCategory = questionCategoryService.findQuestionCategoryByName(questionCategoryDTO.getName());
+        if(duplicateQCategory != null){
+            if(duplicateQCategory.getId() != id) {
+                bindingResult
+                        .rejectValue("name", "error.questionCategory",
+                                "There is already a Question Category with the name provided");
+            }
         }
         if (bindingResult.hasErrors()){
             modelAndView.setViewName("/admin/category/editCategory");

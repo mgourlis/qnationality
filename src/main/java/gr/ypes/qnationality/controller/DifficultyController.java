@@ -48,7 +48,7 @@ public class DifficultyController {
         ModelAndView modelAndView = new ModelAndView();
         Difficulty difficulty = difficultyService.getOne(id);
         if(difficulty != null){
-            modelAndView.addObject("difficulties", difficulty);
+            modelAndView.addObject("difficulty", difficulty);
             modelAndView.setViewName("admin/difficulty/showDifficulty");
             return modelAndView;
         }else {

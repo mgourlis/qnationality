@@ -1,5 +1,6 @@
-package gr.ypes.qnationality.dto;
+package gr.ypes.qnationality.controller;
 
+import gr.ypes.qnationality.dto.QuestionDTO;
 import gr.ypes.qnationality.model.Difficulty;
 import gr.ypes.qnationality.model.Question;
 import gr.ypes.qnationality.model.QuestionCategory;

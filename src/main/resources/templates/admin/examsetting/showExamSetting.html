@@ -4,7 +4,39 @@
       layout:decorate="~{layouts/default}" >
 <body>
 <div id="main" layout:fragment="content">
-    <div>This is home page content</div>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <h2 th:text="#{examsetting.examsetting} "></h2>
+            </div>
+            <div class="col-md-6">
+                <div class="pull-right">
+                    <a th:href="${'/admin/exam-setting/'}" class="btn btn-primary mb-2"><span th:text="#{general.gobacktolist}"></span></a>
+                    <a th:href="${'/admin/exam-setting/edit/' + examSetting.getId()}" class="btn btn-warning mb-2"><span th:text="#{general.edit}"></span></a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <label th:text="#{examsetting.name} + ': ' "></label>
+            <span th:text="${examSetting.name}"></span>
+            <br/>
+            <label th:text="#{examsetting.enabled} + ': ' "></label>
+            <span th:if="${examSetting.enabled}"><span th:text="#{general.yes}"></span></span>
+            <span th:if="${!examSetting.enabled}"><span th:text="#{general.no}"></span></span>
+            <br/>
+            <label th:text="#{examsetting.numofquestions} + ': ' "></label>
+            <span th:text="${examSetting.getNumOfQuestions()}"></span>
+            <br/>
+            <br/>
+            <label><span th:text="#{examsetting.qcadnumshow}"></span></label>
+            <br/>
+            <div class="col-sm-9" th:each="qCAD,iterationStatus : ${examSetting.getQuestionCategoryAndDifficultySettings()}">
+                <br/>
+                <label th:text="${qCAD.getQuestionCategory().getName() + ' - ' + qCAD.getDifficulty().getLevel()}">qCAD</label><br/><span th:text="#{examsetting.numofquestions} + ':' "></span>
+                <span th:text="${examSetting.questionCategoryAndDifficultySettings[__${iterationStatus.index}__].numOfQuestions}"></span>
+            </div>
+        </div>
+    </div>
 </div>
 </body>
 </html>

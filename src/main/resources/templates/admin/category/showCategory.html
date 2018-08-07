@@ -4,7 +4,23 @@
       layout:decorate="~{layouts/default}" >
 <body>
 <div id="main" layout:fragment="content">
-    <div>This is home page content</div>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <h2 th:text="#{questioncategory.questioncategory} "></h2>
+            </div>
+            <div class="col-md-6">
+                <div class="pull-right">
+                    <a th:href="${'/admin/question-category/'}" class="btn btn-primary mb-2"><span th:text="#{general.gobacktolist}"></span></a>
+                    <a th:href="${'/admin/question-category/edit/' + questionCategory.getId()}" class="btn btn-warning mb-2"><span th:text="#{general.edit}"></span></a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <label th:text="#{questioncategory.name} + ': ' "></label>
+            <span th:text="${questionCategory.name}"></span>
+        </div>
+    </div>
 </div>
 </body>
 </html>

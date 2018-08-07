@@ -48,11 +48,17 @@ public class QuestionCategoryServiceImpl implements IQuestionCategoryService {
         }else{
             QuestionCategory oldQuestionCategory = questionCategoryRepository.findQuestionCategoryByIdAndDeleted(questionCategory.getId(),false);
             if(oldQuestionCategory != null){
-                if(questionCategoryRepository.findQuestionCategoryByNameAndDeleted(questionCategory.getName(),false) == null){
+                QuestionCategory dublicateQCategory = questionCategoryRepository.findQuestionCategoryByNameAndDeleted(questionCategory.getName(),false);
+                if(dublicateQCategory != null) {
+                    if (dublicateQCategory.getId() != questionCategory.getId()) {
+                            throw new EntityExistsException("Question Category already exists");
+                    } else {
+                        oldQuestionCategory.setName(questionCategory.getName());
+                        questionCategoryRepository.save(oldQuestionCategory);
+                    }
+                }else{
                     oldQuestionCategory.setName(questionCategory.getName());
                     questionCategoryRepository.save(oldQuestionCategory);
-                }else{
-                    throw new EntityExistsException("Question Category already exists");
                 }
             }else{
                 throw new EntityNotFoundException("Can't save Question Category. Invalid Question Category");

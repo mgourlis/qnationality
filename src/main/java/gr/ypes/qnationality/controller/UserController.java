@@ -57,7 +57,7 @@ public class UserController {
     public ModelAndView showUser(@PathVariable("id") long id){
         ModelAndView modelAndView = new ModelAndView();
         User user = userService.findUserById(id);
-        modelAndView.addObject("users", user);
+        modelAndView.addObject("user", user);
         modelAndView.setViewName("admin/user/showUser");
         return modelAndView;
     }

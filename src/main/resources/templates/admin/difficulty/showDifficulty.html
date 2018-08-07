@@ -4,7 +4,27 @@
       layout:decorate="~{layouts/default}" >
 <body>
 <div id="main" layout:fragment="content">
-    <div>This is home page content</div>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <h2 th:text="#{difficulty.difficulty} "></h2>
+            </div>
+            <div class="col-md-6">
+                <div class="pull-right">
+                    <a th:href="${'/admin/difficulty/'}" class="btn btn-primary mb-2"><span th:text="#{general.gobacktolist}"></span></a>
+                    <a th:href="${'/admin/difficulty/edit/' + difficulty.getId()}" class="btn btn-warning mb-2"><span th:text="#{general.edit}"></span></a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <label th:text="#{difficulty.level} + ': ' "></label>
+            <span th:text="${difficulty.level}"></span>
+            <br/>
+            <label th:text="#{difficulty.percentage} + ': ' "></label>
+            <span th:text="${difficulty.levelNumber + '%'}"></span>
+            <br/>
+        </div>
+    </div>
 </div>
 </body>
 </html>
