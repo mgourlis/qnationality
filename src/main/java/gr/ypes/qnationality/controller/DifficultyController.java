@@ -78,8 +78,6 @@ public class DifficultyController {
             throw new EntityNotFoundException();
         }
 
-        //TODO - check if used
-
         else if (bindingResult.hasErrors()){
             modelAndView.setViewName("/admin/difficulty/editDifficulty");
         }
@@ -139,8 +137,6 @@ public class DifficultyController {
         }else{
             throw new HttpClientErrorException(HttpStatus.NOT_FOUND);
         }
-
-        //TODO - Check difficulty settings before delete
 
         difficultyService.delete(id);
         modelAndView.setViewName("redirect:/admin/difficulty/");

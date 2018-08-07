@@ -15,6 +15,8 @@ import net.sf.jasperreports.engine.fill.JRFileVirtualizer;
 import net.sf.jasperreports.export.SimpleExporterInput;
 import net.sf.jasperreports.export.SimpleOutputStreamExporterOutput;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -62,6 +64,9 @@ public class UserExamController {
     @Autowired
     JasperReport jasperReport;
 
+    @Autowired
+    private MessageSource messageSource;
+
     @RequestMapping(value= "/new", method = RequestMethod.GET)
     public ModelAndView createExam(Authentication authentication){
         ModelAndView modelAndView = new ModelAndView();
@@ -97,8 +102,9 @@ public class UserExamController {
             modelAndView.setViewName("user/exam/createExam");
         } else {
             try {
-                String uid = examService.createExam(createExamDTO.getExam(examSetting),createExamDTO.getExamSettingId());
-                modelAndView.addObject("successMessageBox","exam with uid: " + uid + " created successfully");
+                String messageParams[] = new String[1];
+                messageParams[0] = examService.createExam(createExamDTO.getExam(examSetting),createExamDTO.getExamSettingId());
+                modelAndView.addObject("successMessageBox",messageSource.getMessage("success.message.createexam", messageParams, LocaleContextHolder.getLocale())); //exam with uid: " + uid + " created successfully
             }catch (Exception e){
                 modelAndView.addObject("examSettings", examSettingService.findAllSortedAsc());
                 modelAndView.addObject("errorMessageBox", "Error: " + e.getMessage());
