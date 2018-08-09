@@ -13,9 +13,6 @@ public class CreateExamDTO {
     @NotEmpty
     private String foreas;
 
-    @Size(max = 512)
-    private String languageExemptionNotes;
-
     public long getExamSettingId() {
         return examSettingId;
     }
