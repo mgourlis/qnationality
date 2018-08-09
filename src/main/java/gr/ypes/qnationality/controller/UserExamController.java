@@ -1,6 +1,7 @@
 package gr.ypes.qnationality.controller;
 
 import gr.ypes.qnationality.dto.CreateExamDTO;
+import gr.ypes.qnationality.model.Exam;
 import gr.ypes.qnationality.model.ExamSetting;
 import gr.ypes.qnationality.model.User;
 import gr.ypes.qnationality.service.IExamService;
@@ -38,6 +39,7 @@ import javax.validation.Valid;
 import java.io.FileInputStream;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -74,7 +76,8 @@ public class UserExamController {
         CreateExamDTO createExamDTO = new CreateExamDTO();
         createExamDTO.setForeas(user.getForeas());
         try {
-            String exam_uid = examService.findLastByUser(authentication.getName()).getuID();
+            Exam exam = examService.findLastByUser(authentication.getName());
+            modelAndView.addObject("examcreatedtime", exam.getCreatedAt().getTime());
             modelAndView.addObject("downloadtrue", "true");
         }catch (Exception e){
             modelAndView.addObject("downloadtrue", "false");
@@ -104,12 +107,19 @@ public class UserExamController {
             try {
                 String messageParams[] = new String[1];
                 messageParams[0] = examService.createExam(createExamDTO.getExam(examSetting),createExamDTO.getExamSettingId());
+                modelAndView.addObject("examcreatedtime", (new Date()).getTime());
                 modelAndView.addObject("successMessageBox",messageSource.getMessage("success.message.createexam", messageParams, LocaleContextHolder.getLocale())); //exam with uid: " + uid + " created successfully
+                modelAndView.addObject("downloadtrue", "true");
             }catch (Exception e){
                 modelAndView.addObject("examSettings", examSettingService.findAllSortedAsc());
-                modelAndView.addObject("errorMessageBox", "Error: " + e.getMessage());
+                String messageParams[] = new String[1];
+                modelAndView.addObject("errorMessageBox", messageSource.getMessage(e.getMessage(),messageParams, LocaleContextHolder.getLocale()));
+                Exam lastExam =examService.findLastByUser(authentication.getName());
+                if(lastExam != null) {
+                    modelAndView.addObject("examcreatedtime", lastExam.getCreatedAt().getTime());
+                    modelAndView.addObject("downloadtrue", "true");
+                }
             }
-            modelAndView.addObject("downloadtrue", "true");
             modelAndView.addObject("examSettings", examSettingService.findAllSortedAsc());
             modelAndView.setViewName("user/exam/createExam");
         }

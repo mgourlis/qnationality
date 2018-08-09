@@ -2,6 +2,7 @@ package gr.ypes.qnationality.model;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -99,6 +100,7 @@ public class Exam extends BaseEntity {
     }
 
     public List<ExamQuestion> getExamQuestions() {
+        Collections.sort(examQuestions);
         return examQuestions;
     }
 

@@ -4,6 +4,23 @@
       layout:decorate="~{layouts/default}" >
 <body>
 <div id="main" layout:fragment="content">
+    <script>
+        function printElem(divId) {
+            var content = document.getElementById(divId).innerHTML;
+            var mywindow = window.open('', 'Print', 'height=600,width=800');
+
+            mywindow.document.write('<html><head><title>Print</title>');
+            mywindow.document.write('</head><body >');
+            mywindow.document.write(content);
+            mywindow.document.write('</body></html>');
+
+            mywindow.document.close();
+            mywindow.focus()
+            mywindow.print();
+            mywindow.close();
+            return true;
+        }
+    </script>
     <div class="container">
         <div class="row">
             <div class="col-sm-6">
@@ -11,10 +28,14 @@
                     <div class="form-group mb-2"><input type="text" id="uid" name="uid"  th:placeholder="#{exam.uniqueid}" class="form-control" /></div>
                     <button class="btn btn-primary mb-2" type="Submit" th:text="#{general.search}"></button>
                 </form>
+                <br/>
+                <div th:if="${exam != null}" style ='float: left; padding: 5px;'>
+                    <button class="btn btn-primary mb-2" type="button" onclick="printElem('examinfo')" th:text="#{general.print}"></button>
+                </div>
             </div>
-            <div th:if="${exam != null && exam.getStatus().toString() == 'PENDING'}">
-                <div class="col-sm-6">
-                        <div style="display:inline-block; vertical-align: middle;">
+            <div class="col-sm-6">
+                <div style="display:inline-block; vertical-align: middle;">
+                        <div th:if="${exam != null && exam.getStatus().toString() == 'PENDING'}">
                             <strong><span th:text="#{exam.validateexam} + ': '" style ='float: left; padding: 5px;'></span></strong>
                             <form th:action="@{/moderator/exam/validate}" method="GET" style ='float: left; padding: 5px;'>
                                 <input type="hidden" name="validationstatus" value="true"/>
@@ -30,7 +51,7 @@
                 </div>
             </div>
         </div>
-        <div th:if="${exam != null}">
+        <div id="examinfo" th:if="${exam != null}">
             <div class="col-sm-9">
                 <h3><span th:text="#{exam.uniqueid}"></span>: <span th:text="${exam.getuID()}"></span></h3>
                 <fieldset class="info-border" >

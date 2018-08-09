@@ -4,10 +4,30 @@
       layout:decorate="~{layouts/default}" >
 <body>
 <div id="main" layout:fragment="content">
+    <script>
+        function checkExamCreatedTime(createdAt, message) {
+            examCreated = new Date(createdAt);
+            currentDate = new Date();
+            comparison = Math.abs(currentDate.getTime() - examCreated.getTime());
+            if(comparison > 300000){
+                var confirmation = confirm(message + "\n" + examCreated.getDate() + "/"
+                    + (examCreated.getMonth()+1)  + "/"
+                    + examCreated.getFullYear() + " - "
+                    + examCreated.getHours() + ":"
+                    + examCreated.getMinutes());
+                if(confirmation){
+                    return true;
+                }else{
+                    return false;
+                }
+            }
+            return true;
+        }
+    </script>
         <div class="container">
             <div class="col-md-6" th:if="${downloadtrue == 'true'}">
                 <h2><span th:text="#{exam.downloadexam}"></span></h2>
-                <a th:href="@{/user/exam/download}"><span th:text="#{exam.downloadpdf}"></span></a>
+                <a th:href="@{/user/exam/download}" th:onclick="'return checkExamCreatedTime(' + ${examcreatedtime} + ', \'' + #{general.laexammessage} + '\');'"><span th:text="#{exam.downloadpdf}"></span></a>
             </div>
             <div class="col-md-6">
             <form autocomplete="off" action="#" th:action="@{/user/exam/new}" th:object="${exam}" method="post" class="form-horizontal" role="form">

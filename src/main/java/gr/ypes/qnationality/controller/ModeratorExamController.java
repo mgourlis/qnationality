@@ -3,6 +3,8 @@ package gr.ypes.qnationality.controller;
 import gr.ypes.qnationality.model.Exam;
 import gr.ypes.qnationality.service.IExamService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -19,6 +21,9 @@ public class ModeratorExamController {
     @Autowired
     IExamService examService;
 
+    @Autowired
+    private MessageSource messageSource;
+
     @RequestMapping(value = "/show", method = RequestMethod.GET)
     public ModelAndView showExam(@RequestParam(name = "uid", required = false, defaultValue = "") String uid){
         ModelAndView modelAndView = new ModelAndView();
@@ -28,7 +33,9 @@ public class ModeratorExamController {
         }else{
             Exam exam = examService.findByUID(uid);
             if(exam == null){
-                modelAndView.addObject("errorMessageBox","Exam with uid: " + uid + " does not exist or has been deleted.");
+                String messageParams[] = new String[1];
+                messageParams[0] = uid;
+                modelAndView.addObject("errorMessageBox",messageSource.getMessage("errors.exam.moderator.examnotexist", messageParams, LocaleContextHolder.getLocale() ));
             }else{
                 modelAndView.addObject("exam", exam);
             }
@@ -47,9 +54,13 @@ public class ModeratorExamController {
             try{
                 examService.validateExam(exam,authentication.getName(), validationStatus.equals("true"), true);
                 modelAndView.addObject("exam", exam);
-                modelAndView.addObject("successMessageBox","exam with uid: " + uid + " validated successfully");
+                String messageParams[] = new String[1];
+                messageParams[0] = uid;
+                modelAndView.addObject("successMessageBox",messageSource.getMessage("success.message.validated", messageParams, LocaleContextHolder.getLocale()));
             }catch (Exception e){
-                modelAndView.addObject("errorMessageBox", "Error: " + e.getMessage());
+                String messageParams[] = new String[1];
+                messageParams[0] = uid;
+                modelAndView.addObject("errorMessageBox", messageSource.getMessage(e.getMessage(), messageParams, LocaleContextHolder.getLocale()));
             }
         }
         modelAndView.setViewName("moderator/exam/showExam");

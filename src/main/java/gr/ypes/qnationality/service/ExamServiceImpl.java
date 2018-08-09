@@ -97,7 +97,7 @@ public class ExamServiceImpl implements IExamService {
         ExamSetting examSetting = examSettingService.getOne(examSettingId);
         if(examSetting != null) {
             if(!canGenerateQuestions(examSetting)){
-                throw new IllegalArgumentException("Can not generate exam with this Exam Setting.");
+                throw new IllegalArgumentException("errors.exam.user.failedgenerateexam");
             }
             exam.setStatus(ExamStatus.PENDING);
             exam.setuID(Long.toString(Calendar.getInstance(TimeZone.getTimeZone("Europe/Athens")).getTimeInMillis()));
@@ -106,7 +106,7 @@ public class ExamServiceImpl implements IExamService {
             examRepository.save(exam);
             return exam.getuID();
         }else {
-            throw new EntityNotFoundException("Exam Setting does not exist.");
+            throw new EntityNotFoundException("errors.exam.user.examSettingId");
         }
     }
 
@@ -122,10 +122,10 @@ public class ExamServiceImpl implements IExamService {
                 }
                 examRepository.save(exam);
             } else {
-                throw new IllegalArgumentException("Can not set status to validated");
+                throw new IllegalArgumentException("errors.exam.moderator.cannotvalidate");
             }
         }else{
-            throw new EntityNotFoundException("Exam does not exists");
+            throw new EntityNotFoundException("errors.exam.moderator.examnotexist");
         }
     }
 
@@ -186,7 +186,7 @@ public class ExamServiceImpl implements IExamService {
             Collections.sort(examQuestionsList);
             return examQuestionsList;
         }else{
-            throw new IllegalArgumentException("Failed to generate questions with this Exam Setting");
+            throw new IllegalArgumentException("errors.exam.user.failedgenerateexam");
         }
     }
 
