@@ -51,6 +51,8 @@ public class WebConfiguration extends WebMvcConfigurerAdapter {
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/static/upload-dir/**").addResourceLocations("classpath:static/upload-dir");
+        registry.addResourceHandler("/css/**").addResourceLocations("classpath:static/css");
+        registry.addResourceHandler("/js/**").addResourceLocations("classpath:static/js");
     }
 
     @Override
@@ -79,12 +81,12 @@ public class WebConfiguration extends WebMvcConfigurerAdapter {
     @Bean
     JasperReport examQuestionsReport() throws JRException {
         JasperReport jr = null;
-        File f = new File("examQuestionsReport.jasper");
+        File f = new File(this.getClass().getClassLoader().getResource("static").getFile() + "examQuestionsReport.jasper");
         if (f.exists()) {
             jr = (JasperReport) JRLoader.loadObject(f);
         } else {
-            jr = JasperCompileManager.compileReport("src/main/resources/jasperreports/ithageneia_01.jrxml");
-            JRSaver.saveObject(jr, "examQuestionsReport.jasper");
+            jr = JasperCompileManager.compileReport(this.getClass().getClassLoader().getResource("jasperreports/ithageneia_01.jrxml").getFile());
+            JRSaver.saveObject(jr, this.getClass().getClassLoader().getResource("static").getFile() + "examQuestionsReport.jasper");
         }
         return jr;
     }

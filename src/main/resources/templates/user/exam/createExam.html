@@ -13,7 +13,7 @@
                 var confirmation = confirm(message + "\n" + examCreated.getDate() + "/"
                     + (examCreated.getMonth()+1)  + "/"
                     + examCreated.getFullYear() + " - "
-                    + examCreated.getHours() + ":"
+                    + examCreated.getHours() + ":"u
                     + examCreated.getMinutes());
                 if(confirmation){
                     return true;

@@ -137,7 +137,7 @@ public class UserExamController {
         try {
             String exam_uid = examService.findLastByUser(email).getuID();
             m.put("exam_uid", exam_uid);
-            String name = email + ".pdf";
+            String name = this.getClass().getClassLoader().getResource("static").getFile() + "downloadreports/" + email + ".pdf";
             return generateReport(name, m);
         }
         catch(Exception e){
